@@ -13,3 +13,15 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+.idea
+.docker
+.project
+mocks/
+main
+carfax-api
+carfax-api.exe
+swagger.json
+grpcdoc.html
+src/.DS_Store
+gl-code-quality-report.json
