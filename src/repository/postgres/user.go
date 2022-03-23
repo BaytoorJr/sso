@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/BaytoorJr/sso/src/domain"
+	"github.com/jackc/pgx/v4"
 	"time"
 )
 
@@ -42,28 +43,6 @@ func (u *UserRepository) CreateUser(ctx context.Context, user *domain.User) erro
 	return nil
 }
 
-func (u *UserRepository) AddFields(ctx context.Context, user *domain.User) error {
-	conn, err := u.store.db.Acquire(ctx)
-	if err != nil {
-		return err
-	}
-	defer conn.Release()
-
-	for name, value := range user.Data {
-		_, err = conn.Exec(ctx, "insert into "+fieldsTable+
-			" (id, "+
-			"field_name, "+
-			"field_value) "+
-			"values ($1, $2, $3)",
-			user.ID,
-			name,
-			value,
-		)
-	}
-
-	return nil
-}
-
 func (u *UserRepository) GetUser(ctx context.Context, login string) (*domain.User, error) {
 	var user domain.User
 	conn, err := u.store.db.Acquire(ctx)
@@ -90,12 +69,13 @@ func (u *UserRepository) GetUser(ctx context.Context, login string) (*domain.Use
 	}
 
 	rows, err := conn.Query(ctx, "select field_name, field_value from "+fieldsTable+
-		"where id = $1", user.ID)
+		" where id = $1", user.ID)
 	if err != nil {
 		if err.Error() != "no rows in result set" {
 			return nil, err
 		}
 	}
+	defer rows.Close()
 
 	data := make(map[string]string)
 
@@ -116,14 +96,15 @@ func (u *UserRepository) GetUser(ctx context.Context, login string) (*domain.Use
 	return &user, nil
 }
 
-func (u *UserRepository) UpdateUserField(ctx context.Context, user *domain.User) error {
+func (u *UserRepository) UpdateUser(ctx context.Context, user *domain.User) error {
 	conn, err := u.store.db.Acquire(ctx)
 	if err != nil {
 		return err
 	}
 	defer conn.Release()
 
-	_, err = conn.Exec(ctx, "update "+userTable+" set "+
+	batch := &pgx.Batch{}
+	batch.Queue("update "+userTable+" set "+
 		"login = $1, "+
 		"password = $2, "+
 		"updated_at = $3 "+
@@ -133,18 +114,37 @@ func (u *UserRepository) UpdateUserField(ctx context.Context, user *domain.User)
 		time.Now(),
 		user.ID)
 
+	_, err = conn.SendBatch(ctx, batch).Exec()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *UserRepository) AddProfileFields(ctx context.Context, user *domain.User) error {
+	conn, err := u.store.db.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Release()
+
+	batch := &pgx.Batch{}
+
 	for name, value := range user.Data {
-		_, err = conn.Exec(ctx, "update "+fieldsTable+" set "+
-			"field_name = $1, "+
-			"field_value = $2, "+
-			"where id = $3",
-			name,
-			value,
+		batch.Queue("insert into "+fieldsTable+" ( "+
+			"id, "+
+			"field_name, "+
+			"field_value) values ("+
+			"$1, $2, $3 )",
 			user.ID,
-		)
-		if err != nil {
-			return err
-		}
+			name,
+			value)
+	}
+
+	_, err = conn.SendBatch(ctx, batch).Exec()
+	if err != nil {
+		return err
 	}
 
 	return nil

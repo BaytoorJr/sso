@@ -8,6 +8,7 @@ type (
 		Password string `json:"password"`
 	}
 	CreateUserResponse struct {
+		User domain.User
 	}
 )
 
@@ -24,9 +25,9 @@ type (
 type (
 	GetUserRequest struct {
 		Login    string `json:"-"`
-		Password string `json:"password"`
+		Password string `json:"-"`
 	}
 	GetUserResponse struct {
-		domain.User
+		User domain.User `json:"user"`
 	}
 )

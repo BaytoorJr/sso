@@ -10,13 +10,13 @@ type Config struct {
 
 // DB config struct
 type DBConfig struct {
-	DBHost   string `envconfig:"db_host" required:"true"`
-	DBPort   string `envconfig:"db_port" required:"true"`
-	DBName   string `envconfig:"db_name" required:"true"`
-	DBSchema string `envconfig:"db_schema" required:"true"`
-	DBUser   string `envconfig:"db_user" required:"true"`
-	DBPass   string `envconfig:"db_pass" required:"true"`
-	MaxConns int    `envconfig:"max_conns" required:"true"`
+	PostgresMaxConns int    `envconfig:"postgres_max_conns" required:"true"`
+	PostgresHost     string `envconfig:"postgres_host" required:"true"`
+	PostgresPort     string `envconfig:"postgres_port" required:"true"`
+	PostgresName     string `envconfig:"postgres_name" required:"true"`
+	PostgresSchema   string `envconfig:"postgres_schema" required:"true"`
+	PostgresUser     string `envconfig:"postgres_user" required:"true"`
+	PostgresPass     string `envconfig:"postgres_pass" required:"true"`
 }
 
 func InitConfigs() error {
@@ -26,6 +26,8 @@ func InitConfigs() error {
 	if err != nil {
 		return err
 	}
+
+	MainConfig = &cfg
 
 	return nil
 }

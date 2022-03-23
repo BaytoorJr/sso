@@ -30,8 +30,8 @@ func NewStore(db *pgxpool.Pool, logger log.Logger) (*Store, error) {
 }
 
 func (s *Store) migrate() error {
-	for i := 0; i <= len(migrations); i++ {
-		sql := strings.Replace(migrations[i], "$1", config.MainConfig.DBSchema, 1)
+	for i := 0; i < len(migrations); i++ {
+		sql := strings.Replace(migrations[i], "$1", config.MainConfig.PostgresSchema, 1)
 		_, err := s.db.Exec(context.Background(), sql)
 		if err != nil {
 			return err
