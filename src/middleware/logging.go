@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"context"
+	"time"
+
 	"github.com/BaytoorJr/sso/src/service"
 	"github.com/BaytoorJr/sso/src/transport"
 	"github.com/go-kit/kit/log"
-	"time"
 )
 
 type loggingMiddleware struct {
@@ -39,4 +40,9 @@ func (lm *loggingMiddleware) AddUserFields(ctx context.Context, req *transport.A
 func (lm *loggingMiddleware) GetUser(ctx context.Context, req *transport.GetUserRequest) (_ *transport.GetUserResponse, err error) {
 	defer lm.logging(time.Now(), "GetUser", err)
 	return lm.next.GetUser(ctx, req)
+}
+
+func (lm *loggingMiddleware) DeleteUser(ctx context.Context, req *transport.DeleteUserRequest) (_ *transport.DeleteUserResponse, err error) {
+	defer lm.logging(time.Now(), "DeleteUser", err)
+	return lm.next.DeleteUser(ctx, req)
 }

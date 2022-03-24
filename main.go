@@ -4,6 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
 	httpencoders "git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib/transport/http"
 	corsutil "git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib/utils/cors"
 	healthcheckutil "git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib/utils/healthcheck"
@@ -15,10 +20,6 @@ import (
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 
 	postgresqlConn "git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib/databases/postgresql"
 	liblogger "git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib/utils/logger"

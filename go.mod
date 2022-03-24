@@ -3,7 +3,7 @@ module github.com/BaytoorJr/sso
 go 1.17
 
 require (
-	git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib v0.0.6
+	git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib v0.0.7
 	github.com/go-kit/kit v0.12.0
 	github.com/go-kit/log v0.2.0
 	github.com/google/uuid v1.3.0
@@ -36,4 +36,4 @@ require (
 	google.golang.org/protobuf v1.27.1 // indirect
 )
 
-replace git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib => git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib.git v0.0.6
+replace git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib => git.auto-nomad.kz/auto-nomad/backend/shared-libs/common-lib.git v0.0.7

@@ -2,11 +2,12 @@ package postgres
 
 import (
 	"context"
+	"strings"
+
 	"github.com/BaytoorJr/sso/src/config"
 	"github.com/BaytoorJr/sso/src/repository"
 	"github.com/go-kit/kit/log"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"strings"
 )
 
 type Store struct {

@@ -18,8 +18,7 @@ type (
 		Password string            `json:"-"`
 		Data     map[string]string `json:"data"`
 	}
-	AddUserFieldsResponse struct {
-	}
+	AddUserFieldsResponse struct{}
 )
 
 type (
@@ -30,4 +29,12 @@ type (
 	GetUserResponse struct {
 		User domain.User `json:"user"`
 	}
+)
+
+type (
+	DeleteUserRequest struct {
+		Login    string `json:"-"`
+		Password string `json:"-"`
+	}
+	DeleteUserResponse struct{}
 )

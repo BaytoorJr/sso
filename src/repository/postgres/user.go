@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"context"
+	"time"
+
 	"github.com/BaytoorJr/sso/src/domain"
 	"github.com/jackc/pgx/v4"
-	"time"
 )
 
 type UserRepository struct {
@@ -150,6 +151,22 @@ func (u *UserRepository) AddProfileFields(ctx context.Context, user *domain.User
 	return nil
 }
 
-func (u *UserRepository) DeleteUser(ctx context.Context, login string) error {
+func (u *UserRepository) DeleteUser(ctx context.Context, ID string) error {
+	conn, err := u.store.db.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Release()
+
+	batch := &pgx.Batch{}
+
+	batch.Queue("delete from "+userTable+" where id = $1", ID)
+	batch.Queue("delete from "+fieldsTable+" where id = $1", ID)
+
+	_, err = conn.SendBatch(ctx, batch).Exec()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

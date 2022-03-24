@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+
 	"github.com/BaytoorJr/sso/src/domain"
 	"github.com/BaytoorJr/sso/src/transport"
 )
@@ -54,4 +55,22 @@ func (s *service) GetUser(ctx context.Context, req *transport.GetUserRequest) (*
 	return &transport.GetUserResponse{
 		User: *user,
 	}, nil
+}
+
+func (s *service) DeleteUser(ctx context.Context, req *transport.DeleteUserRequest) (*transport.DeleteUserResponse, error) {
+	user, err := s.store.Users().GetUser(ctx, req.Login)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.Password != req.Password {
+		return nil, errors.New("access denied")
+	}
+
+	err = s.store.Users().DeleteUser(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &transport.DeleteUserResponse{}, nil
 }

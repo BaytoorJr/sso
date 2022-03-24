@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"context"
+	"time"
+
 	"github.com/BaytoorJr/sso/src/service"
 	"github.com/BaytoorJr/sso/src/transport"
 	"github.com/go-kit/kit/metrics"
-	"time"
 )
 
 type instrumentingMiddleware struct {
@@ -48,4 +49,9 @@ func (im *instrumentingMiddleware) AddUserFields(ctx context.Context, req *trans
 func (im *instrumentingMiddleware) GetUser(ctx context.Context, req *transport.GetUserRequest) (_ *transport.GetUserResponse, err error) {
 	defer im.instrumenting(time.Now(), "GetUser", err)
 	return im.next.GetUser(ctx, req)
+}
+
+func (im *instrumentingMiddleware) DeleteUser(ctx context.Context, req *transport.DeleteUserRequest) (_ *transport.DeleteUserResponse, err error) {
+	defer im.instrumenting(time.Now(), "DeleteUser", err)
+	return im.next.DeleteUser(ctx, req)
 }

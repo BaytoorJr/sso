@@ -8,7 +8,6 @@ import (
 )
 
 func initializeRoutes(endpoints *middleware.Endpoints, options []kitHTTP.ServerOption) *mux.Router {
-
 	createUser := kitHTTP.NewServer(
 		endpoints.CreateUser,
 		createUserDecoder,
@@ -30,6 +29,13 @@ func initializeRoutes(endpoints *middleware.Endpoints, options []kitHTTP.ServerO
 		options...,
 	)
 
+	deleteUser := kitHTTP.NewServer(
+		endpoints.DeleteUser,
+		deleteUserDecoder,
+		encoders.EncodeResponse,
+		options...,
+	)
+
 	router := mux.NewRouter()
 
 	router.Path("/sso/v1/user").
@@ -43,6 +49,10 @@ func initializeRoutes(endpoints *middleware.Endpoints, options []kitHTTP.ServerO
 	router.Path("/sso/v1/user").
 		Methods("GET").
 		Handler(getUser)
+
+	router.Path("/sso/v1/user").
+		Methods("DELETE").
+		Handler(deleteUser)
 
 	return router
 }

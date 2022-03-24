@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/BaytoorJr/sso/src/transport"
 	"net/http"
+
 )
 
 func createUserDecoder(_ context.Context, r *http.Request) (interface{}, error) {
@@ -34,6 +35,15 @@ func addUserFieldsDecoder(_ context.Context, r *http.Request) (interface{}, erro
 
 func getUserDecoder(_ context.Context, r *http.Request) (interface{}, error) {
 	var req transport.GetUserRequest
+
+	req.Login = r.Header.Get("Login")
+	req.Password = r.Header.Get("Password")
+
+	return req, nil
+}
+
+func deleteUserDecoder(_ context.Context, r *http.Request) (interface{}, error) {
+	var req transport.DeleteUserRequest
 
 	req.Login = r.Header.Get("Login")
 	req.Password = r.Header.Get("Password")
